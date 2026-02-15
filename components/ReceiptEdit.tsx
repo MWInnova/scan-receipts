@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ReceiptData, Category } from '../types';
+import { ReceiptData, Category } from '../types.ts';
 
 interface ReceiptEditProps {
   initialData: Partial<ReceiptData>;
@@ -8,12 +8,7 @@ interface ReceiptEditProps {
   onCancel: () => void;
 }
 
-/**
- * A form view for users to review and manually correct extracted receipt data.
- * This is critical for data accuracy before syncing to the "sheet".
- */
 const ReceiptEdit: React.FC<ReceiptEditProps> = ({ initialData, onSave, onCancel }) => {
-  // Local state for the editable form fields
   const [formData, setFormData] = useState({
     date: initialData.date || new Date().toISOString().split('T')[0],
     merchant: initialData.merchant || '',
@@ -22,9 +17,6 @@ const ReceiptEdit: React.FC<ReceiptEditProps> = ({ initialData, onSave, onCancel
     paymentSource: initialData.paymentSource || 'Credit Card',
   });
 
-  /**
-   * Validates and bundles the form data into a full ReceiptData object.
-   */
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave({
@@ -38,7 +30,6 @@ const ReceiptEdit: React.FC<ReceiptEditProps> = ({ initialData, onSave, onCancel
 
   return (
     <div className="flex flex-col h-full bg-[#f2f2f7]">
-      {/* Navigation Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-white border-b sticky top-0 z-10">
         <button onClick={onCancel} className="text-blue-600 font-medium">Cancel</button>
         <h2 className="font-semibold text-lg">Verify Details</h2>
@@ -46,7 +37,6 @@ const ReceiptEdit: React.FC<ReceiptEditProps> = ({ initialData, onSave, onCancel
       </div>
 
       <div className="p-4 flex-1 overflow-y-auto space-y-6">
-        {/* Receipt Image Preview for context during editing */}
         {initialData.imageUrl && (
           <div className="w-full h-48 bg-gray-200 rounded-xl overflow-hidden shadow-sm">
             <img src={initialData.imageUrl} alt="Receipt" className="w-full h-full object-cover" />
@@ -54,7 +44,6 @@ const ReceiptEdit: React.FC<ReceiptEditProps> = ({ initialData, onSave, onCancel
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Main Transaction Details Section */}
           <div className="bg-white rounded-xl divide-y overflow-hidden border">
             <div className="flex items-center px-4 py-3">
               <label className="w-24 text-gray-500 font-medium">Merchant</label>
@@ -91,7 +80,6 @@ const ReceiptEdit: React.FC<ReceiptEditProps> = ({ initialData, onSave, onCancel
             </div>
           </div>
 
-          {/* Classification Section */}
           <div className="bg-white rounded-xl divide-y overflow-hidden border">
             <div className="flex items-center px-4 py-3">
               <label className="w-24 text-gray-500 font-medium">Category</label>
@@ -117,10 +105,6 @@ const ReceiptEdit: React.FC<ReceiptEditProps> = ({ initialData, onSave, onCancel
             </div>
           </div>
         </form>
-
-        <p className="text-xs text-center text-gray-400 px-6">
-          Double check the total and merchant name. This information will be synced to your primary expense sheet.
-        </p>
       </div>
     </div>
   );
