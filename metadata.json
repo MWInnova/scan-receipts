@@ -1,0 +1,7 @@
+{
+  "name": "ScanSheet - Receipt Scanner",
+  "description": "A professional-grade mobile application for scanning receipts, extracting data using Gemini AI, and managing your expenses in a spreadsheet-like interface.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

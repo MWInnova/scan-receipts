@@ -1,0 +1,19 @@
+
+{
+  "name": "ScanSheet",
+  "short_name": "ScanSheet",
+  "description": "Professional Receipt Scanner and Expense Manager",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f2f2f7",
+  "theme_color": "#2563eb",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%232563eb'/%3E%3Cpath d='M150 120h212v272H150z' fill='white'/%3E%3Cpath d='M180 160h152v20H180zM180 200h152v20H180zM180 240h100v20H180z' fill='%232563eb'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
