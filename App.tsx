@@ -1,30 +1,21 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, ReceiptData } from './types';
-import CameraView from './components/CameraView';
-import ReceiptEdit from './components/ReceiptEdit';
-import HistoryView from './components/HistoryView';
-import { processReceipt } from './services/geminiService';
+import React, { useState, useEffect } from 'react';
+import { View, ReceiptData } from './types.ts';
+import CameraView from './components/CameraView.tsx';
+import ReceiptEdit from './components/ReceiptEdit.tsx';
+import HistoryView from './components/HistoryView.tsx';
+import { processReceipt } from './services/geminiService.ts';
 
 /**
  * Main Application Component.
- * Manages global state including data persistence, navigation, and background AI tasks.
  */
 const App: React.FC = () => {
-  // Navigation and data state
   const [activeView, setActiveView] = useState<View>('history');
   const [receipts, setReceipts] = useState<ReceiptData[]>([]);
-  
-  // UI States
   const [isScanning, setIsScanning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  
-  // Transient state for data currently being reviewed by the user
   const [currentEdit, setCurrentEdit] = useState<Partial<ReceiptData> | null>(null);
 
-  /**
-   * Persistence: Load previous scan history from browser local storage on startup.
-   */
   useEffect(() => {
     const saved = localStorage.getItem('scansheet_data');
     if (saved) {
@@ -32,24 +23,15 @@ const App: React.FC = () => {
     }
   }, []);
 
-  /**
-   * Persistence: Automatically sync local storage whenever the receipts array changes.
-   */
   useEffect(() => {
     localStorage.setItem('scansheet_data', JSON.stringify(receipts));
   }, [receipts]);
 
-  /**
-   * Core logic for handling image data (from camera or file upload).
-   * Passes the image to Gemini for processing and then moves to the edit view.
-   */
   const handleCapture = async (base64: string) => {
     setIsScanning(false);
     setIsProcessing(true);
     try {
-      // Use the Gemini service to extract data from the image
       const extractedData = await processReceipt(base64);
-      // Prepare the edit view with the extracted data and the original image
       setCurrentEdit({ ...extractedData, imageUrl: base64, id: Date.now().toString() });
       setActiveView('edit');
     } catch (err) {
@@ -59,10 +41,6 @@ const App: React.FC = () => {
     }
   };
 
-  /**
-   * Processes an uploaded file (from gallery or drag-drop).
-   * Converts the file to Base64 before starting the extraction process.
-   */
   const handleFileUpload = (file: File) => {
     if (!file.type.startsWith('image/')) {
       alert("Please upload an image file.");
@@ -78,18 +56,12 @@ const App: React.FC = () => {
     reader.readAsDataURL(file);
   };
 
-  /**
-   * Finalizes the data and adds it to the master list.
-   */
   const saveReceipt = (data: ReceiptData) => {
     setReceipts(prev => [data, ...prev]);
     setCurrentEdit(null);
     setActiveView('history');
   };
 
-  /**
-   * Placeholder for Google Sheets API integration.
-   */
   const simulateSync = () => {
     if (receipts.length === 0) return;
     setIsProcessing(true);
@@ -102,7 +74,6 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-[#f2f2f7] shadow-2xl overflow-hidden safe-area-top">
-      {/* Main content switches based on navigation state */}
       <main className="flex-1 overflow-hidden relative">
         {activeView === 'history' && (
           <HistoryView 
@@ -120,7 +91,6 @@ const App: React.FC = () => {
           />
         )}
 
-        {/* Global Modal View for Camera */}
         {isScanning && (
           <CameraView 
             onCapture={handleCapture}
@@ -128,7 +98,6 @@ const App: React.FC = () => {
           />
         )}
 
-        {/* Global Processing Spinner */}
         {isProcessing && (
           <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center text-center p-8">
             <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -138,7 +107,6 @@ const App: React.FC = () => {
         )}
       </main>
 
-      {/* Persistent Bottom Tab Bar */}
       <nav className="h-20 bg-white/90 backdrop-blur-md border-t flex items-center justify-around px-6 safe-area-bottom z-40">
         <button 
           onClick={() => setActiveView('history')}
@@ -150,7 +118,6 @@ const App: React.FC = () => {
           <span className="text-[10px] font-medium">Sheet</span>
         </button>
 
-        {/* Floating Action Button (FAB) for Camera */}
         <button 
           onClick={() => setIsScanning(true)}
           className="relative -top-6 bg-blue-600 text-white w-16 h-16 rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform"

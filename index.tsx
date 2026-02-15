@@ -1,11 +1,10 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import App from './App.tsx';
 
 /**
  * Entry point of the React application.
- * It finds the 'root' element in index.html and mounts the main App component.
  */
 const rootElement = document.getElementById('root');
 if (!rootElement) {
