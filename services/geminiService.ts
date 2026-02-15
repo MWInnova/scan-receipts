@@ -1,14 +1,9 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { ReceiptData } from "../types";
+import { ReceiptData } from "../types.ts";
 
-// Initialize the Gemini AI client with the provided environment API key.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+const ai = new GoogleGenAI({ apiKey: (typeof process !== 'undefined' && process.env.API_KEY) || '' });
 
-/**
- * Define a JSON schema to force Gemini to return structured data.
- * This ensures the extraction follows our ReceiptData model strictly.
- */
 const receiptSchema = {
   type: Type.OBJECT,
   properties: {
@@ -36,10 +31,6 @@ const receiptSchema = {
   required: ["date", "merchant", "total", "category"]
 };
 
-/**
- * Sends a base64 encoded image to the Gemini model for content analysis.
- * Uses a system-level prompt and responseSchema to get reliable JSON back.
- */
 export async function processReceipt(base64Image: string): Promise<Partial<ReceiptData>> {
   try {
     const response = await ai.models.generateContent({
@@ -47,14 +38,12 @@ export async function processReceipt(base64Image: string): Promise<Partial<Recei
       contents: {
         parts: [
           {
-            // The actual visual data from the receipt
             inlineData: {
               mimeType: "image/jpeg",
               data: base64Image.split(',')[1] || base64Image
             }
           },
           {
-            // Instructions for the AI
             text: "Analyze this receipt image and extract the key details in JSON format. If information is missing, provide your best guess or an empty string."
           }
         ]
@@ -65,7 +54,6 @@ export async function processReceipt(base64Image: string): Promise<Partial<Recei
       }
     });
 
-    // Parse the structured text output from the AI
     const result = JSON.parse(response.text || '{}');
     return {
       date: result.date || new Date().toISOString().split('T')[0],
